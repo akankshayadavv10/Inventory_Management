@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Laptop Computer",
+    "description": "High-performance business laptop",
+    "category": "Electronics",
+    "quantity": 25,
+    "minQuantity": 10,
+    "price": 999.99,
+    "supplier": "Tech Solutions Inc.",
+    "location": "Warehouse A-1",
+    "lastUpdated": "2024-01-15"
+  },
+  {
+    "id": 2,
+    "name": "Office Chair",
+    "description": "Ergonomic office chair",
+    "category": "Furniture",
+    "quantity": 8,
+    "minQuantity": 15,
+    "price": 299.99,
+    "supplier": "Office Furniture Co.",
+    "location": "Warehouse B-2",
+    "lastUpdated": "2024-01-14"
+  },
+  {
+    "id": 3,
+    "name": "Wireless Mouse",
+    "description": "Bluetooth wireless mouse",
+    "category": "Electronics",
+    "quantity": 150,
+    "minQuantity": 50,
+    "price": 29.99,
+    "supplier": "Tech Solutions Inc.",
+    "location": "Warehouse A-3",
+    "lastUpdated": "2024-01-16"
+  },
+  {
+    "id": 4,
+    "name": "Printer Paper",
+    "description": "A4 white printer paper, 500 sheets",
+    "category": "Office Supplies",
+    "quantity": 5,
+    "minQuantity": 20,
+    "price": 12.99,
+    "supplier": "Paper & More",
+    "location": "Storage C-1",
+    "lastUpdated": "2024-01-13"
+  }
+]
