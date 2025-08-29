@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import CategoryFilter from "./CategoryFilter.jsx"; // <-- use your existing component
 
 export default function AddItemModal({ item = null, onClose, onSubmit }) {
   const [form, setForm] = useState({
@@ -9,15 +10,33 @@ export default function AddItemModal({ item = null, onClose, onSubmit }) {
     price: 0,
     supplier: "",
     location: "",
-    description: ""
+    description: "",
   });
+
+  const [categories, setCategories] = useState([]);
+
+  // Fetch categories from backend
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/categories");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setCategories(data.map((c) => c.name)); // assuming { _id, name }
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories", err);
+      }
+    })();
+  }, []);
 
   // Populate form if editing
   useEffect(() => {
     if (item) setForm({ ...item });
   }, [item]);
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
   const save = (e) => {
     e.preventDefault();
     onSubmit(form);
@@ -29,7 +48,9 @@ export default function AddItemModal({ item = null, onClose, onSubmit }) {
         onSubmit={save}
         className="bg-white rounded-xl shadow-lg w-full max-w-lg p-4 space-y-3 text-sm"
       >
-        <div className="text-md font-semibold">{item ? "Edit Item" : "Add Item"}</div>
+        <div className="text-md font-semibold">
+          {item ? "Edit Item" : "Add Item"}
+        </div>
 
         {/* First two rows with 2 columns */}
         <div className="grid grid-cols-2 gap-3">
@@ -46,12 +67,28 @@ export default function AddItemModal({ item = null, onClose, onSubmit }) {
 
           <div className="flex flex-col">
             <label className="mb-1 font-medium">Category</label>
-            <input
-              className="border rounded-md px-2 py-1 w-full text-sm"
-              placeholder="Enter category"
+            <CategoryFilter
               value={form.category}
-              onChange={(e) => set("category", e.target.value)}
-              required
+              onChange={(val) => set("category", val)}
+              options={["All Categories", ...categories]}
+              onAdd={async (newCat) => {
+                try {
+                  const res = await fetch("http://localhost:5000/api/categories", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: newCat }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) return alert(data.error);
+
+                  // update selected category and categories list
+                  set("category", data.name);
+                  setCategories((prev) => [...prev, data.name]);
+                } catch (err) {
+                  console.error(err);
+                  alert("Failed to add category");
+                }
+              }}
             />
           </div>
 
