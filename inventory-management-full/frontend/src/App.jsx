@@ -91,23 +91,42 @@ export default function App() {
   return (
     <div className="min-h-screen w-full bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
-        <div className="w-full px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">⌂</div>
-            <div>
-              <h1 className="text-2xl font-semibold">Inventory Management</h1>
-              <p className="text-sm text-gray-500">Track and manage your goods inventory</p>
-            </div>
-          </div>
-          <button 
-            className="bg-black text-white px-4 py-2 rounded-md flex items-center gap-2" 
-            onClick={() => setShowAdd(true)}
-          >
-            <Plus size={16}/> Add New Item
-          </button>
-        </div>
-      </header>
+     <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
+  <div className="w-full px-6 py-4 flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">⌂</div>
+      <div>
+        <h1 className="text-2xl font-semibold">Inventory Management</h1>
+        <p className="text-sm text-gray-500">Track and manage your goods inventory</p>
+      </div>
+    </div>
+
+    {/* ✅ Buttons row */}
+    <div className="flex items-center gap-3">
+      <button 
+        className="bg-black text-white px-4 py-2 rounded-md flex items-center gap-2" 
+        onClick={() => setShowAdd(true)}
+      >
+        <Plus size={16}/> Add Item
+      </button>
+
+      <button 
+        className="bg-black text-white px-4 py-2 rounded-md flex items-center gap-2"
+        onClick={() => alert("TODO: Open Create Invoice modal")}
+      >
+        🧾 Create Invoice
+      </button>
+
+      <button 
+        className="bg-black text-white px-4 py-2 rounded-md flex items-center gap-2"
+        onClick={() => alert("TODO: Navigate to Invoice List")}
+      >
+        📑 View Invoices
+      </button>
+    </div>
+  </div>
+</header>
+
 
       {/* Content */}
       <main className="w-full space-y-6 p-6">
