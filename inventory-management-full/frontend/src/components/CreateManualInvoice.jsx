@@ -18,6 +18,7 @@ import {
   Checkbox,
   Divider,
   Box,
+  Autocomplete,
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 
@@ -172,6 +173,13 @@ alert("Invoice created successfully!");
     setLoading(false);
   }
 };
+const [products, setProducts] = useState([]);
+
+useEffect(() => {
+  axios.get("http://localhost:5000/api/products")
+    .then((res) => setProducts(res.data))
+    .catch((err) => console.error("Failed to fetch products:", err));
+}, []);
 
 
 
@@ -405,13 +413,22 @@ alert("Invoice created successfully!");
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
-                    <TextField
-                      value={item.productId}
-                      onChange={(e) =>
-                        handleItemChange(index, "productId", e.target.value)
-                      }
-                      size="small"
-                    />
+                    <Autocomplete
+  size="small"
+  options={products}
+  getOptionLabel={(option) => `${option.code} - ${option.name}`}
+  value={products.find((p) => p._id === item.productId) || null}
+  onChange={(e, newValue) => {
+    if (newValue) {
+      handleItemChange(index, "productId", newValue._id);
+      handleItemChange(index, "description", newValue.description || "");
+      handleItemChange(index, "unitPrice", newValue.unitPrice || 0);
+    } else {
+      handleItemChange(index, "productId", "");
+    }
+  }}
+  renderInput={(params) => <TextField {...params} label="Select Product" />}
+/>
                   </TableCell>
                   <TableCell>
                     <TextField
