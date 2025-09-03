@@ -232,18 +232,19 @@ import AddItemModal from './components/AddItemModal.jsx'
 import EditItemModal from './components/EditItemModal.jsx'
 // import { CreateManualInvoice } from "./components/CreateManualInvoice.jsx"
 import CreateManualInvoice from './components/CreateManualInvoice.jsx'
+import InvoiceList from './components/InvoiceList.jsx'
 import { generatePDFManualInvoice } from "./components/GeneratePDFManualInvoice.jsx"
 import { getProducts, addProduct, updateProduct, deleteProduct } from './api/product.js'
 
 // Create a simple placeholder component for Invoice List
-function InvoiceList() {
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Invoice List</h2>
-      <p>This is where your invoices will be displayed.</p>
-    </div>
-  )
-}
+// function InvoiceList() {
+//   return (
+//     <div className="p-6">
+//       <h2 className="text-xl font-semibold mb-4">Invoice List</h2>
+//       <p>This is where your invoices will be displayed.</p>
+//     </div>
+//   )
+// }
 
 export default function App() {
   const [items, setItems] = useState([])
