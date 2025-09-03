@@ -1,128 +1,54 @@
+const mongoose = require("mongoose");
 
-// const mongoose = require('mongoose');
+const invoiceSchema = new mongoose.Schema(
+  {
+    consignee: {
+      name: { type: String, required: true },
+      address: { type: String, required: true },
+      gstin: { type: String, default: "" },
+      state: { type: String, default: "" },
+      stateCode: { type: String, default: "" },
+    },
+    billTo: {
+      name: { type: String, required: true },
+      address: { type: String, required: true },
+      gstin: { type: String, default: "" },
+      state: { type: String, default: "" },
+      stateCode: { type: String, default: "" },
+    },
+    sameAsConsignee: { type: Boolean, default: true },
 
-// const invoiceSchema = new mongoose.Schema({
-//   invoiceNumber: {
-//     type: String,
-//     required: [true, 'Invoice number is required'],
-//     // unique: true,
-//     trim: true
-//   },
-//   customerName: {
-//     type: String,
-//     required: [true, 'Customer name is required']
-//   },
-//   customerContact: {
-//     type: String
-//   },
-//   items: [
-//     {
-//       productId: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'Product',
-//         required: [true, 'Product ID is required']
-//       },
-//       quantity: {
-//         type: Number,
-//         required: [true, 'Quantity is required']
-//       },
-//       unitPrice: {
-//         type: Number,
-//         required: [true, 'Unit price is required']
-//       },
-//       totalPrice: {
-//         type: Number,
-//         required: [true, 'Total price is required']
-//       }
-//     }
-//   ],
-//   subTotal: {
-//     type: Number,
-//     required: [true, 'Subtotal is required']
-//   },
-//   tax: {
-//     type: Number,
-//     required: [true, 'Tax is required']
-//   },
-//   discount: {
-//     type: Number,
-//     default: 0
-//   },
-//   grandTotal: {
-//     type: Number,
-//     required: [true, 'Grand total is required']
-//   },
-//   paymentStatus: {
-//     type: String,
-//     enum: ['Paid', 'Pending', 'Partial'],
-//     default: 'Pending'
-//   }
-// }, { timestamps: true }); // replaces createdAt manually
+    gstInvoiceNo: { type: String, required: true, unique: true },
+    eWayBillNo: { type: String, default: "" },
+    transportation: { type: String, default: "" },
 
-// module.exports = mongoose.model('Invoice', invoiceSchema);
+    invoiceDate: { type: Date, required: true },
+    poNumber: { type: String, default: "" },
+    poDate: { type: Date },
 
-const mongoose = require('mongoose');
-
-const invoiceSchema = new mongoose.Schema({
-  invoiceNumber: {
-    type: String,
-    required: [true, 'Invoice number is required'],
-    trim: true,
-    unique: true   // better to enforce unique invoices
-  },
-  customerName: {
-    type: String,
-    required: [true, 'Customer name is required']
-  },
-  customerContact: {
-    type: String
-  },
-  items: [
-    {
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-        required: [true, 'Product ID is required']
+    items: [
+      {
+        productId: { type: String, default: "" },
+        description: { type: String, required: true },
+        quantity: { type: Number, required: true, min: 0 },
+        unitPrice: { type: Number, required: true, min: 0 },
+        gstPercent: { type: String, default: "18%" },
+        totalPrice: { type: Number, required: true, min: 0 }, // lowercase t
       },
-      quantity: {
-        type: Number,
-        required: [true, 'Quantity is required']
-      },
-      unitPrice: {
-        type: Number,
-        required: [true, 'Unit price is required']
-      },
-      totalPrice: {
-        type: Number,
-        required: [true, 'Total price is required']
-      }
-    }
-  ],
-  subTotal: {
-    type: Number,
-    required: [true, 'Subtotal is required']
-  },
-  tax: {
-    type: Number,   // ✅ percentage OR fixed, coming from frontend
-    default: 0
-  },
-  discountPercent: {
-    type: Number,   // ✅ percentage from frontend
-    default: 0
-  },
-  discountAmount: {   // ✅ NEW FIELD (calculated from discountPercent)
-    type: Number,
-    default: 0
-  },
-  grandTotal: {
-    type: Number,
-    required: [true, 'Grand total is required']
-  },
-  paymentStatus: {
-    type: String,
-    enum: ['Paid', 'Pending', 'Partial'],
-    default: 'Pending'
-  }
-}, { timestamps: true });
+    ],
 
-module.exports = mongoose.model('Invoice', invoiceSchema);
+    subTotal: { type: Number, required: true, min: 0 },
+    cgst: { type: Number, required: true, min: 0 },
+    sgst: { type: Number, required: true, min: 0 },
+    grandTotal: { type: Number, required: true, min: 0 },
+
+    status: {
+      type: String,
+      enum: ["Pending", "Paid", "Cancelled"],
+      default: "Pending",
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Invoice", invoiceSchema);

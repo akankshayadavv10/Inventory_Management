@@ -1,43 +1,4 @@
-// const express = require('express');
-// const mongoose = require('mongoose');
-// require('dotenv').config();
-// const cors = require('cors');
 
-// const userRoutes = require('./routes/userRoutes');
-// const userRoleRoutes = require('./routes/userRoleRoutes');
-// const authRoutes = require('./routes/authRoutes'); 
-// const inventoryRoutes = require('./routes/inventoryRoutes'); 
-// const productRoutes = require('./routes/productRoutes');
-// const invoiceRoutes = require('./routes/invoiceRoutes');
-// const categoryRoutes = require('./routes/categoryRoutes');
-
-// const app = express();
-
-// // Enable CORS
-// app.use(cors({
-//   origin: 'http://localhost:5173',
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   allowedHeaders: ['Content-Type', 'Authorization']
-// }));
-
-// app.use(express.json());
-
-// app.use('/api/users', userRoutes);
-// app.use('/api/userroles', userRoleRoutes);
-// app.use('/api/auth', authRoutes);
-// app.use('/api/inventory', inventoryRoutes);
-// app.use('/api/products', productRoutes);
-// app.use('/api/invoices', invoiceRoutes);
-// app.use('/api/categories', categoryRoutes);
-
-// mongoose.connect(process.env.MONGO_URI)
-//   .then(() => {
-//     console.log("MongoDB Connected");
-//     app.listen(process.env.PORT || 5000, () =>
-//       console.log(`Server running on port ${process.env.PORT}`)
-//     );
-//   })
-//   .catch(err => console.error(err));
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
