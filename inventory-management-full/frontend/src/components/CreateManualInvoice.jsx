@@ -109,11 +109,10 @@ useEffect(() => {
   const numberToWords = (num) => (num ? num.toLocaleString("en-IN") + " Rupees" : "Zero Rupees");
 
   // Save Invoice
- const handleSave = async () => {
+const handleSave = async () => {
   try {
     setLoading(true);
 
-    // Ensure Bill To is valid
     const billToData = invoice.sameAsConsignee
       ? { ...invoice.consignee }
       : {
@@ -124,7 +123,6 @@ useEffect(() => {
           stateCode: invoice.billTo.stateCode || "",
         };
 
-    // Validate required fields
     if (!invoice.consignee.name || !invoice.consignee.address || !billToData.name || !billToData.address) {
       alert("Consignee and Bill To Name & Address are required!");
       setLoading(false);
@@ -148,24 +146,22 @@ useEffect(() => {
       grandTotal,
     };
 
-    // ❌ Remove gstInvoiceNo, backend generates it
-// remove gstInvoiceNo before sending
-// remove gstInvoiceNo before sending
-delete payload.gstInvoiceNo;
+    delete payload.gstInvoiceNo;
 
-const response = await axios.post(
-  "http://localhost:5000/api/invoices/add",
-  payload
-);
+    const response = await axios.post("http://localhost:5000/api/invoices/add", payload);
 
-// update local form with the actual saved invoice number (so user sees final number)
-if (response?.data?.invoice?.gstInvoiceNo) {
-  setInvoice(prev => ({ ...prev, gstInvoiceNo: response.data.invoice.gstInvoiceNo }));
-}
+    if (response?.data?.invoice?.gstInvoiceNo) {
+      setInvoice((prev) => ({
+        ...prev,
+        gstInvoiceNo: response.data.invoice.gstInvoiceNo,
+      }));
+    }
 
-console.log("Invoice saved:", response.data);
-alert("Invoice created successfully!");
+    // 🔑 Refetch updated products from backend
+    const productsRes = await axios.get("http://localhost:5000/api/products");
+    setProducts(productsRes.data);
 
+    alert("Invoice created successfully!");
     setLoading(false);
     onClose();
   } catch (error) {
@@ -173,6 +169,8 @@ alert("Invoice created successfully!");
     setLoading(false);
   }
 };
+
+
 const [products, setProducts] = useState([]);
 
 useEffect(() => {

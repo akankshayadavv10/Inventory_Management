@@ -1,22 +1,23 @@
 const Invoice = require("../models/invoiceModel");
-const Counter = require("../models/counterModel");
+const Counter = require("../models/counterModel"); 
+const Product = require("../models/productModel"); 
 
 // Create new invoice
 // Create new invoice
+// ✅ Without transactions
 exports.addInvoice = async (req, res) => {
   try {
     const invoiceData = req.body;
 
-    // ✅ This is correct
+    // Generate Invoice No
     const counter = await Counter.findOneAndUpdate(
       { name: "gstInvoice" },
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );
     invoiceData.gstInvoiceNo = `GSTInv-${String(counter.seq).padStart(3, "0")}`;
-    console.log("Generated Invoice No:", invoiceData.gstInvoiceNo);
 
-    // Check required fields
+    // Required fields check
     if (
       !invoiceData.consignee?.name ||
       !invoiceData.consignee?.address ||
@@ -26,10 +27,13 @@ exports.addInvoice = async (req, res) => {
       return res.status(400).json({ error: "Missing required invoice fields" });
     }
 
-    // Ensure totals
+    // Calculate totals
     let subTotal = 0;
     invoiceData.items.forEach((item) => {
-      item.totalPrice = Number(item.totalPrice) || (Number(item.quantity) * Number(item.unitPrice)) || 0;
+      item.totalPrice =
+        Number(item.totalPrice) ||
+        Number(item.quantity) * Number(item.unitPrice) ||
+        0;
       subTotal += item.totalPrice;
     });
 
@@ -46,21 +50,32 @@ exports.addInvoice = async (req, res) => {
     invoiceData.sgst = sgst;
     invoiceData.grandTotal = grandTotal;
 
-    // Save
+    // ✅ Deduct product stock (no transactions)
+    for (const item of invoiceData.items) {
+      const product = await Product.findById(item.productId);
+      if (!product) {
+        return res.status(404).json({ error: `Product with ID ${item.productId} not found` });
+      }
+
+      if (product.quantity < item.quantity) {
+        return res.status(400).json({ error: `Not enough stock for product ${product.name}` });
+      }
+
+      product.quantity -= item.quantity;
+      await product.save();
+    }
+
+    // Save Invoice
     const invoice = new Invoice(invoiceData);
     await invoice.save();
 
     res.status(201).json({ message: "Invoice created successfully", invoice });
   } catch (error) {
     console.error("Error creating invoice:", error);
-
-    if (error.code === 11000) {
-      return res.status(400).json({ error: "GST Invoice No must be unique" });
-    }
-
-    res.status(500).json({ error: "Failed to create invoice" });
+    res.status(500).json({ error: error.message || "Failed to create invoice" });
   }
 };
+
 
 // Get all invoices (optional filters)
 exports.getInvoices = async (req, res) => {
